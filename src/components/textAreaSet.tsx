@@ -12,7 +12,7 @@ interface TextAreaSetProps {
 export default function TextAreaSet (props: TextAreaSetProps){
     return (
         <div className="flex flex-col">
-          <label htmlFor={props.idTextArea} className="mb-2 text-lg font-medium text-gray-700">
+          <label htmlFor={props.idTextArea} className="text-lg font-medium text-gray-700">
             {props.labelText}
           </label>
           <br/>
