@@ -2,15 +2,12 @@ import { useState } from 'react';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import TextAreaSet from './components/textAreaSet';
 import TextSet from './components/TextSet';
+import { useReviewForm } from './constants/opinionConstants'
 import 'tailwindcss'
 
 function App() {
   const [titulo, setTitulo] = useState("");
-  const [sinposis, setSinopsis] = useState("");
-  const [historia, setHistoria] = useState("");
-  const [logros, setLogros] = useState("");
-  const [mecanicas, setMecanicas] = useState("");
-  const [conclusiones, setConclusiones] = useState("");
+  const form = useReviewForm()
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>, setter: Dispatch<SetStateAction<string>>) => {
     setter(e.target.value);
@@ -19,34 +16,47 @@ function App() {
   };
 
   return (
-    
+
     <div className="min-h-screen w-screen flex flex-col justify-center items-center bg-gray-50 py-12">
 
       <header className="w-full flex justify-center mb-16 px-6">
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 border-b-2 pb-2">
           CMS Platinum Scope
         </h1>
-        <br/>
+        <br />
       </header>
 
       <main className="w-full px-10">
         <div className='mb-10'>
           <TextSet
-          idText='titulo'
-          labelText='Titulo'
-          varText={titulo}
-          setVarText={setTitulo}
-          placeholderText='Fortnite'
+            idText='titulo'
+            labelText='Titulo'
+            varText={titulo}
+            setVarText={setTitulo}
+            placeholderText='Fortnite'
           />
         </div>
+
+        <label className="mb-100 text-lg font-medium text-gray-700">
+                Ficha técnica
+        </label>
+        <details className="border rounded p-4">
+          <summary className="cursor-pointer font-semibold text-gray-700">
+            Requisitos mínimos
+          </summary>
+
+          <div className="mt-4 flex flex-col gap-2">
+            
+          </div>
+        </details>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
           <TextAreaSet
             idTextArea='sinopsis'
             labelText='Sinopsis'
             onChangeFunction={handleInput}
-            varText={sinposis}
-            setVarText={setSinopsis}
+            varText={form.sinopsis}
+            setVarText={form.setSinopsis}
             placeholderTextArea='¿De qué va el juego?'
           />
 
@@ -54,8 +64,8 @@ function App() {
             idTextArea='historia'
             labelText='Historia'
             onChangeFunction={handleInput}
-            varText={historia}
-            setVarText={setHistoria}
+            varText={form.historia}
+            setVarText={form.setHistoria}
             placeholderTextArea='¿Cómo ves la historia?'
           />
 
@@ -63,8 +73,8 @@ function App() {
             idTextArea='logros'
             labelText='Logros'
             onChangeFunction={handleInput}
-            varText={logros}
-            setVarText={setLogros}
+            varText={form.logros}
+            setVarText={form.setLogros}
             placeholderTextArea='¿Cómo te han parecido en general los logros?'
           />
 
@@ -72,8 +82,8 @@ function App() {
             idTextArea='mecanicas'
             labelText='Mecanicas'
             onChangeFunction={handleInput}
-            varText={mecanicas}
-            setVarText={setMecanicas}
+            varText={form.mecanicas}
+            setVarText={form.setMecanicas}
             placeholderTextArea='¿Cómo se sintió jugarlo?'
           />
 
@@ -81,14 +91,14 @@ function App() {
             idTextArea='conclusiones'
             labelText='Conclusiones'
             onChangeFunction={handleInput}
-            varText={conclusiones}
-            setVarText={setConclusiones}
+            varText={form.conclusiones}
+            setVarText={form.setConclusiones}
             placeholderTextArea='¿Resumen de todo lo anterior?'
           />
 
         </div>
       </main>
-
+      <button className='mt-20'>Guardar</button>
     </div>
   );
 }
