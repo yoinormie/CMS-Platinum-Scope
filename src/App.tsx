@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import TextAreaSet from './components/textAreaSet';
+import TextSet from './components/TextSet';
 import 'tailwindcss'
 
 function App() {
+  const [titulo, setTitulo] = useState("");
   const [sinposis, setSinopsis] = useState("");
   const [historia, setHistoria] = useState("");
   const [logros, setLogros] = useState("");
@@ -27,8 +29,17 @@ function App() {
         <br/>
       </header>
 
-      {/* Cambiamos max-w-6xl por w-full */}
       <main className="w-full px-10">
+        <div className='mb-10'>
+          <TextSet
+          idText='titulo'
+          labelText='Titulo'
+          varText={titulo}
+          setVarText={setTitulo}
+          placeholderText='Fortnite'
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
           <TextAreaSet
             idTextArea='sinopsis'
