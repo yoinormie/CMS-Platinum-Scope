@@ -1,11 +1,20 @@
+@import 'tailwindcss';
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --line-height: 1.5;
+  --font-weight: 400;
+
+  --color-bg: #f3e8ff;
+  --color-bg-alt: #e9d9ff;
+  --color-text: #3b0256;
+  --color-text-light: #ffffff;
+  --color-primary: #9b59b6;
+  --color-primary-hover: #7d3f99;
+  --color-accent: #b084cc;
+  --color-border: #d6b7e5;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,24 +24,32 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  color: var(--color-primary);
+  text-decoration: none;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--color-primary-hover);
 }
 
 body {
   margin: 0;
+  font-family: var(--font-family);
+  line-height: var(--line-height);
+  font-weight: var(--font-weight);
+  color: var(--color-text);
+  background-color: var(--color-bg);
   display: flex;
-  place-items: center;
+  flex-direction: column;
   min-width: 320px;
   min-height: 100vh;
+  place-items: center;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: var(--color-primary);
+  text-align: center;
 }
 
 button {
@@ -42,27 +59,51 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-alt);
+  color: var(--color-text);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, background-color 0.25s, color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+
+[data-theme="dark"] {
+  --color-bg: #1c1b29;
+  --color-bg-alt: #2a2438;
+  --color-text: #e0d4f7;
+  --color-text-light: #ffffff;
+  --color-primary: #c89de3;
+  --color-primary-hover: #b073d1;
+  --color-accent: #9b5fc1;
+  --color-border: #5e3b71;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --color-bg: #f3e8ff;
+    --color-bg-alt: #e9d9ff;
+    --color-text: #3b0256;
+    --color-primary: #9b59b6;
+    --color-primary-hover: #7d3f99;
+    --color-border: #d6b7e5;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c1b29;
+    --color-bg-alt: #2a2438;
+    --color-text: #e0d4f7;
+    --color-primary: #c89de3;
+    --color-primary-hover: #b073d1;
+    --color-border: #5e3b71;
   }
 }
