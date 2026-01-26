@@ -1,5 +1,3 @@
-import type { Dispatch, SetStateAction } from "react"
-
 interface TextSetProps {
     varText: string
     setVarText: (value: string) => void;
