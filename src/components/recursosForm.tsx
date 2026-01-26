@@ -33,7 +33,6 @@ export function RecursosForm(props: RecursosFormProps) {
                         labelText="Enlace"
                         varText={r.enlace}
                         setVarText={(v: string) => props.varRecursos.updateRecurso(i, "enlace", v)}
-                        placeholderText="Enlace del recurso"
                     />
 
                     <TextSet
@@ -41,7 +40,6 @@ export function RecursosForm(props: RecursosFormProps) {
                         labelText="Autor"
                         varText={r.autor || ""}
                         setVarText={(v: string) => props.varRecursos.updateRecurso(i, "autor", v)}
-                        placeholderText="Autor del recurso"
                     />
 
                     {r.tipo === "artículo" && (
@@ -51,7 +49,7 @@ export function RecursosForm(props: RecursosFormProps) {
                                 labelText="Título"
                                 varText={r.titulo || ""}
                                 setVarText={(v: string) => props.varRecursos.updateRecurso(i, "titulo", v)}
-                                placeholderText="Título del artículo"
+                                placeholderText="¿De qué va el artículo?"
                             />
 
                             <TextSet
@@ -59,7 +57,7 @@ export function RecursosForm(props: RecursosFormProps) {
                                 labelText="Snippet"
                                 varText={r.snippet || ""}
                                 setVarText={(v: string) => props.varRecursos.updateRecurso(i, "snippet", v)}
-                                placeholderText="Snippet del artículo"
+                                placeholderText="Snippet para OpenGraph"
                             />
 
                             <TextSet
@@ -67,7 +65,6 @@ export function RecursosForm(props: RecursosFormProps) {
                                 labelText="Imagen"
                                 varText={r.imagen || ""}
                                 setVarText={(v: string) => props.varRecursos.updateRecurso(i, "imagen", v)}
-                                placeholderText="URL de la imagen"
                             />
                         </>
                     )}
