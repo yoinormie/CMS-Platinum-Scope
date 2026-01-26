@@ -6,12 +6,15 @@ import { RecRequirementsSets } from './components/recRequirementsSets';
 import { TextAreaSetsOpinion } from './components/textAreaSetsOpinion';
 import { useRecursos } from './hooks/recursosHooks';
 import { RecursosForm } from './components/recursosForm';
+import { useEnlacesCompra } from './hooks/enlaceCompraHooks';
 import 'tailwindcss'
+import { EnlacesCompraForm } from './components/enlacesForm';
 
 
 function App() {
   const [titulo, setTitulo] = useState("");
   const resourceForm = useRecursos()
+  const enlacesCompraForm = useEnlacesCompra()
 
   return (
 
@@ -21,7 +24,6 @@ function App() {
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 border-b-2 border-[var(--color-border)] pb-2">
           CMS Platinum Scope
         </h1>
-        <br />
       </header>
 
       <main className="w-full px-10">
@@ -79,6 +81,16 @@ function App() {
         varRecursos={resourceForm}
       />
 
+      <button
+        className="my-4 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+        onClick={() => enlacesCompraForm.addEnlaceCompra()}
+      >
+        Añadir enlace compra
+      </button>
+
+      <EnlacesCompraForm
+      varEnlaces={enlacesCompraForm}
+      />
 
       <button className='mt-20'>Guardar</button>
     </div>
