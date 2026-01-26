@@ -2,8 +2,7 @@ import type { Dispatch, SetStateAction } from "react"
 
 interface TextSetProps {
     varText: string
-    setVarText: Dispatch<SetStateAction<string>>
-
+    setVarText: (value: string) => void;
     idText: string
     labelText: string
     placeholderText?: string
