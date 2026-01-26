@@ -59,13 +59,6 @@ export function RecursosForm(props: RecursosFormProps) {
                                 setVarText={(v: string) => props.varRecursos.updateRecurso(i, "snippet", v)}
                                 placeholderText="Snippet para OpenGraph"
                             />
-
-                            <TextSet
-                                idText={`recurso-${i}-imagen`}
-                                labelText="Imagen"
-                                varText={r.imagen || ""}
-                                setVarText={(v: string) => props.varRecursos.updateRecurso(i, "imagen", v)}
-                            />
                         </>
                     )}
 
