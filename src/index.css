@@ -74,6 +74,15 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+input, textarea {
+  color: var(--color-accent);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--color-text);
+}
+
 
 [data-theme="dark"] {
   --color-bg: #1c1b29;
