@@ -9,10 +9,16 @@ import { RecursosForm } from './components/recursosForm';
 import { useEnlacesCompra } from './hooks/enlaceCompraHooks';
 import 'tailwindcss'
 import { EnlacesCompraForm } from './components/enlacesForm';
+import { PreSaveModal } from './components/preSaveModal';
+import ImagePicker from './components/filePicker';
 
 
 function App() {
   const [titulo, setTitulo] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [jsonPath, setJsonPath] = useState("");
+  const [imagesFolder, setImagesFolder] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const resourceForm = useRecursos()
   const enlacesCompraForm = useEnlacesCompra()
 
@@ -36,6 +42,11 @@ function App() {
             placeholderText='Fortnite'
           />
         </div>
+
+        <ImagePicker
+          label='Imagen juego'
+          onSelect={(file) => setSelectedImage(file)}
+        />
 
         <label className="text-lg font-medium text-gray-700">
           Ficha técnica
@@ -89,10 +100,24 @@ function App() {
       </button>
 
       <EnlacesCompraForm
-      varEnlaces={enlacesCompraForm}
+        varEnlaces={enlacesCompraForm}
       />
 
-      <button className='mt-20'>Guardar</button>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className='mt-14'>Guardar</button>
+
+      {isModalOpen && (
+        <PreSaveModal
+          setModalVar={setIsModalOpen}
+          jsonVar={jsonPath}
+          setJsonVar={setJsonPath}
+          imageFolderVar={imagesFolder}
+          setImageFolderVar={setImagesFolder}
+        />
+      )}
+
+
     </div>
   );
 }
