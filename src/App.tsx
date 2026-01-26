@@ -3,7 +3,11 @@ import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import TextAreaSet from './components/textAreaSet';
 import TextSet from './components/TextSet';
 import { useReviewForm } from './constants/opinionConstants'
+import { TextSetsFichaTecnica } from './components/textSetsFichaTecnica';
+import { MinRequirementsSets } from './components/minRequirementsSets';
+import { RecRequirementsSets } from './components/recRequirementsSets';
 import 'tailwindcss'
+
 
 function App() {
   const [titulo, setTitulo] = useState("");
@@ -20,7 +24,7 @@ function App() {
     <div className="min-h-screen w-screen flex flex-col justify-center items-center bg-gray-50 py-12">
 
       <header className="w-full flex justify-center mb-16 px-6">
-        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 border-b-2 pb-2">
+        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 border-b-2 border-[var(--color-border)] pb-2">
           CMS Platinum Scope
         </h1>
         <br />
@@ -37,18 +41,32 @@ function App() {
           />
         </div>
 
-        <label className="mb-100 text-lg font-medium text-gray-700">
-                Ficha técnica
+        <label className="text-lg font-medium text-gray-700">
+          Ficha técnica
         </label>
-        <details className="border rounded p-4">
-          <summary className="cursor-pointer font-semibold text-gray-700">
-            Requisitos mínimos
-          </summary>
+        <div className="border border-[var(--color-border)] rounded p-4 my-4">
+          <TextSetsFichaTecnica/>
+          <details className='my-2'>
+            <summary className="cursor-pointer font-semibold text-gray-700">
+              Requisitos mínimos
+            </summary>
 
-          <div className="mt-4 flex flex-col gap-2">
-            
-          </div>
-        </details>
+            <div className="mt-4 flex flex-col gap-2">
+              <MinRequirementsSets />
+            </div>
+
+          </details>
+          <details className='my-2'>
+            <summary className="cursor-pointer font-semibold text-gray-700">
+              Requisitos recomendados
+            </summary>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <RecRequirementsSets />
+            </div>
+
+          </details>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
           <TextAreaSet
