@@ -1,23 +1,17 @@
 import { useState } from 'react';
-import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import TextAreaSet from './components/textAreaSet';
 import TextSet from './components/TextSet';
-import { useReviewForm } from './constants/opinionConstants'
 import { TextSetsFichaTecnica } from './components/textSetsFichaTecnica';
 import { MinRequirementsSets } from './components/minRequirementsSets';
 import { RecRequirementsSets } from './components/recRequirementsSets';
+import { TextAreaSetsOpinion } from './components/textAreaSetsOpinion';
+import { useRecursos } from './hooks/recursosHooks';
+import { RecursosForm } from './components/recursosForm';
 import 'tailwindcss'
 
 
 function App() {
   const [titulo, setTitulo] = useState("");
-  const form = useReviewForm()
-
-  const handleInput = (e: ChangeEvent<HTMLTextAreaElement>, setter: Dispatch<SetStateAction<string>>) => {
-    setter(e.target.value);
-    e.target.style.height = "auto";
-    e.target.style.height = e.target.scrollHeight + "px";
-  };
+  const resourceForm = useRecursos()
 
   return (
 
@@ -45,7 +39,7 @@ function App() {
           Ficha técnica
         </label>
         <div className="border border-[var(--color-border)] rounded p-4 my-4">
-          <TextSetsFichaTecnica/>
+          <TextSetsFichaTecnica />
           <details className='my-2'>
             <summary className="cursor-pointer font-semibold text-gray-700">
               Requisitos mínimos
@@ -69,53 +63,23 @@ function App() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
-          <TextAreaSet
-            idTextArea='sinopsis'
-            labelText='Sinopsis'
-            onChangeFunction={handleInput}
-            varText={form.sinopsis}
-            setVarText={form.setSinopsis}
-            placeholderTextArea='¿De qué va el juego?'
-          />
 
-          <TextAreaSet
-            idTextArea='historia'
-            labelText='Historia'
-            onChangeFunction={handleInput}
-            varText={form.historia}
-            setVarText={form.setHistoria}
-            placeholderTextArea='¿Cómo ves la historia?'
-          />
-
-          <TextAreaSet
-            idTextArea='logros'
-            labelText='Logros'
-            onChangeFunction={handleInput}
-            varText={form.logros}
-            setVarText={form.setLogros}
-            placeholderTextArea='¿Cómo te han parecido en general los logros?'
-          />
-
-          <TextAreaSet
-            idTextArea='mecanicas'
-            labelText='Mecanicas'
-            onChangeFunction={handleInput}
-            varText={form.mecanicas}
-            setVarText={form.setMecanicas}
-            placeholderTextArea='¿Cómo se sintió jugarlo?'
-          />
-
-          <TextAreaSet
-            idTextArea='conclusiones'
-            labelText='Conclusiones'
-            onChangeFunction={handleInput}
-            varText={form.conclusiones}
-            setVarText={form.setConclusiones}
-            placeholderTextArea='¿Resumen de todo lo anterior?'
-          />
-
+          <TextAreaSetsOpinion />
         </div>
       </main>
+
+      <button
+        className="my-4 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+        onClick={() => resourceForm.addRecurso("video")}
+      >
+        Añadir recurso
+      </button>
+
+      <RecursosForm
+        varRecursos={resourceForm}
+      />
+
+
       <button className='mt-20'>Guardar</button>
     </div>
   );
