@@ -2,6 +2,14 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import Store from 'electron-store'
+
+interface StoreSchema {
+    lastFile: string;
+    lastDirectory: string;
+}
+
+const store = new (Store as any)() as Store<StoreSchema>;
 
 let win: BrowserWindow;
 
@@ -62,3 +70,10 @@ ipcMain.handle('open-directory', async () => {
 });
 
 
+ipcMain.handle('set-path', (_event, key: string, value: string) => {
+    (store as any).set(key, value);
+});
+
+ipcMain.handle('get-path', (_event, key: string) => {
+    return (store as any).get(key);
+});
