@@ -1,7 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
-import TextSet from "./TextSet";
 import PickRouteTextSet from "./PickRouteTextSet";
+import { useEffect } from "react";
+import { getStorePath, setStorePath } from "../hooks/electronHooks";
 
 interface PreSaveModalProps {
     jsonVar: string
@@ -13,6 +14,32 @@ interface PreSaveModalProps {
 
 export function PreSaveModal(props: PreSaveModalProps) {
     const [remember, setRemember] = useState(false);
+    const [filePath, setFilePath] = useState('');
+    const [dirPath, setDirPath] = useState('');
+
+    useEffect(() => {
+        getStorePath('lastFile').then(p => {
+            if (p) {
+                setFilePath(p);
+                props.setJsonVar(p);
+            }
+        });
+        getStorePath('lastDirectory').then(p => {
+            if (p) {
+                setDirPath(p);
+                props.setImageFolderVar(p);
+            }
+        });
+    }, []);
+
+
+    const handleSave = async () => {
+        if (remember) {
+            if (props.jsonVar) await setStorePath('lastFile', props.jsonVar);
+            if (props.imageFolderVar) await setStorePath('lastDirectory', props.imageFolderVar);
+        }
+        props.setModalVar(false);
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-30">
@@ -57,7 +84,9 @@ export function PreSaveModal(props: PreSaveModalProps) {
                     </button>
                     <button
                         onClick={() => {
+                            handleSave
                             props.setModalVar(false);
+                            
                         }}
                         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                     >
