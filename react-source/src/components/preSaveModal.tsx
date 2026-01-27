@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import TextSet from "./TextSet";
+import PickRouteTextSet from "./PickRouteTextSet";
 
 interface PreSaveModalProps {
     jsonVar: string
@@ -20,20 +21,22 @@ export function PreSaveModal(props: PreSaveModalProps) {
 
                 {/* Ejemplo de inputs */}
                 <div className="flex flex-col gap-3">
-                    <TextSet
+                    <PickRouteTextSet
                         idText="json-path"
                         labelText="Ruta del JSON"
                         varText={props.jsonVar}
                         setVarText={props.setJsonVar}
                         placeholderText="./data/reviews.json"
+                        typePicker="file"
                     />
 
-                    <TextSet
+                    <PickRouteTextSet
                         idText="images-folder"
                         labelText="Carpeta de imágenes"
                         varText={props.imageFolderVar}
                         setVarText={props.setImageFolderVar}
                         placeholderText="./assets/images/"
+                        typePicker="directory"
                     />
                     <label className="flex items-center gap-2 mt-2 text-sm">
                         <input
