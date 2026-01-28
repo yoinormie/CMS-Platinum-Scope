@@ -4,6 +4,7 @@ import { TextSetsFichaTecnica } from './components/textSetsFichaTecnica';
 import { MinRequirementsSets } from './components/minRequirementsSets';
 import { RecRequirementsSets } from './components/recRequirementsSets';
 import { TextAreaSetsOpinion } from './components/textAreaSetsOpinion';
+import { useRequirementsForm } from './constants/requisitosConstants';
 import { useRecursos } from './hooks/recursosHooks';
 import { RecursosForm } from './components/recursosForm';
 import { useEnlacesCompra } from './hooks/enlaceCompraHooks';
@@ -11,11 +12,17 @@ import 'tailwindcss'
 import { EnlacesCompraForm } from './components/enlacesForm';
 import { PreSaveModal } from './components/preSaveModal';
 import ImagePicker from './components/filePicker';
+import { canSaveMainForm } from './utils/validators';
+import { useReviewForm } from './constants/opinionConstants';
+import { WarningModal } from './components/warningModal';
 
 
 function App() {
+  const minRequirements = useRequirementsForm()
+  const form = useReviewForm()
   const [titulo, setTitulo] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [isPreSaveModalOpen, setIsPreSaveModalOpen] = useState(false);
   const [jsonPath, setJsonPath] = useState("");
   const [imagesFolder, setImagesFolder] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -33,6 +40,14 @@ function App() {
       </header>
 
       <main className="w-full px-10">
+
+        {isWarningModalOpen && (
+          <WarningModal
+            isOpen={isWarningModalOpen}
+            setIsOpen={setIsWarningModalOpen}
+          />
+        )}
+
         <div className='mb-10'>
           <TextSet
             idText='titulo'
@@ -59,7 +74,7 @@ function App() {
             </summary>
 
             <div className="mt-4 flex flex-col gap-2">
-              <MinRequirementsSets />
+              <MinRequirementsSets form={minRequirements} />
             </div>
 
           </details>
@@ -77,7 +92,7 @@ function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
 
-          <TextAreaSetsOpinion />
+          <TextAreaSetsOpinion form={form} />
         </div>
       </main>
 
@@ -104,21 +119,31 @@ function App() {
       />
 
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+          if (canSaveMainForm({ titulo: titulo, selectedImage: selectedImage, minRequirements: minRequirements, opinion: form, enlacesCompra: enlacesCompraForm.enlacesCompra })) {
+            setIsPreSaveModalOpen(true)
+            return
+          }
+          setIsWarningModalOpen(true)
+        }
+
+        }
         className='mt-14'>Guardar</button>
 
-      {isModalOpen && (
-        <PreSaveModal
-          setModalVar={setIsModalOpen}
-          jsonVar={jsonPath}
-          setJsonVar={setJsonPath}
-          imageFolderVar={imagesFolder}
-          setImageFolderVar={setImagesFolder}
-        />
-      )}
+      {
+        isPreSaveModalOpen && (
+          <PreSaveModal
+            setModalVar={setIsPreSaveModalOpen}
+            jsonVar={jsonPath}
+            setJsonVar={setJsonPath}
+            imageFolderVar={imagesFolder}
+            setImageFolderVar={setImagesFolder}
+          />
+        )
+      }
 
 
-    </div>
+    </div >
   );
 }
 
