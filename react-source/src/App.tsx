@@ -11,15 +11,16 @@ import { useEnlacesCompra } from './hooks/enlaceCompraHooks';
 import 'tailwindcss'
 import { EnlacesCompraForm } from './components/enlacesForm';
 import { PreSaveModal } from './components/preSaveModal';
-import ImagePicker from './components/filePicker';
 import { canSaveMainForm } from './utils/validators';
 import { useReviewForm } from './constants/opinionConstants';
 import { WarningModal } from './components/warningModal';
 import { buildReviewJson } from './utils/jsonBuilder';
 import { handleAddReview } from './hooks/electronHooks';
+import type { SelectedImage } from './types/imageType';
 
 
 function App() {
+  let filePath: string = "";
   const minRequirements = useRequirementsForm()
   const recRequirements = useRequirementsForm();
   const form = useReviewForm()
@@ -31,9 +32,11 @@ function App() {
   const [editor, setEditor] = useState("");
   const [jsonPath, setJsonPath] = useState("");
   const [imagesFolder, setImagesFolder] = useState("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null);
   const resourceForm = useRecursos()
   const enlacesCompraForm = useEnlacesCompra()
+  const slug = titulo.toLowerCase().replace(/\s+/g, "_");
+
 
   const handleFinalSave = async (jsonPath: string) => {
     const review = buildReviewJson({
@@ -55,6 +58,26 @@ function App() {
 
     await handleAddReview(review, jsonPath);
   };
+
+  const handleSaveImage = async (
+    image: { path: string },
+    destDir: string,
+    slug: string
+  ): Promise<string> => {
+    const result = await window.api.copyRenameFile(
+      image.path,
+      destDir,
+      slug
+    );
+
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+
+    return result.path!;
+  };
+
+
 
   return (
 
@@ -85,10 +108,28 @@ function App() {
           />
         </div>
 
-        <ImagePicker
+        {/*<ImagePicker
           label='Imagen juego'
-          onSelect={(file) => setSelectedImage(file)}
-        />
+          onSelect={(file) => {
+            console.log(file.name)
+            setSelectedImage(file)}}
+        />*/}
+
+        <button
+          className='mb-4'
+          onClick={async () => {
+            filePath = await window.api.openFile();
+            if (!filePath) return;
+
+            setSelectedImage({
+              name: filePath.split(/[\\/]/).pop()!,
+              path: filePath
+            } as any);
+          }}
+        >
+          {selectedImage?.name ?? "Seleccionar imagen"}
+        </button>
+        <br />
 
         <label className="text-lg font-medium text-gray-700">
           Ficha técnica
@@ -184,6 +225,9 @@ function App() {
             imageFolderVar={imagesFolder}
             setImageFolderVar={setImagesFolder}
             onSave={handleFinalSave}
+            slug={slug}
+            selectedImage={selectedImage}
+            onSaveImage={handleSaveImage}
           />
         )
       }
