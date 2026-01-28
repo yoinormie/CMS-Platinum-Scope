@@ -13,6 +13,8 @@ declare global {
                 destDir: string,
                 newName: string
             ) => Promise<{ success: boolean; path?: string; error?: string }>;
+            gitAutoCommit: (jsonPath: string, imagesDir: string, message: string) => Promise<{ success: boolean, jsonRoot: string, error?: string }>
+            getRelativeImagePath: (jsonPath: string, imagesDir: string) => Promise<{ success: boolean, path: string }>
         };
     };
 }
