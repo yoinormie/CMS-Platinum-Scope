@@ -15,7 +15,7 @@ import { canSaveMainForm } from './utils/validators';
 import { useReviewForm } from './constants/opinionConstants';
 import { WarningModal } from './components/warningModal';
 import { buildReviewJson } from './utils/jsonBuilder';
-import { handleAddReview } from './hooks/electronHooks';
+import { handleAddReview, handleImageRelativePath } from './hooks/electronHooks';
 import type { SelectedImage } from './types/imageType';
 
 
@@ -32,6 +32,7 @@ function App() {
   const [editor, setEditor] = useState("");
   const [jsonPath, setJsonPath] = useState("");
   const [imagesFolder, setImagesFolder] = useState("");
+  const [gitRootPath, setGitRootPath] = useState("");
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null);
   const resourceForm = useRecursos()
   const enlacesCompraForm = useEnlacesCompra()
@@ -39,10 +40,46 @@ function App() {
 
 
   const handleFinalSave = async (jsonPath: string) => {
+    if (!selectedImage) {
+      alert("No hay imagen");
+      return;
+    }
+
+    // 1. Copiar imagen y obtener path absoluto nuevo
+    const savedImagePath = await handleSaveImage(
+      selectedImage,
+      imagesFolder,
+      slug
+    );
+
+    // 2. Obtener ruta relativa de carpeta
+    const relativeDir = await handleImageRelativePath(
+      jsonPath,
+      imagesFolder
+    );
+
+    if (!relativeDir) {
+      alert("No se pudo calcular la ruta relativa");
+      return;
+    }
+
+    // 3. Sacar solo el nombre del archivo
+    const fileName = savedImagePath.split(/[\\/]/).pop();
+
+    if (!fileName) {
+      alert("No se pudo obtener el nombre de la imagen");
+      return;
+    }
+
+    // 4. Construir ruta final para el JSON
+    const finalImagePath = `${relativeDir}/${fileName}`;
+
+    console.log(finalImagePath)
+
     const review = buildReviewJson({
-      id: titulo.toLowerCase().replace(/\s+/g, "_"),
+      id: slug,
       titulo,
-      imagen: imagesFolder,
+      imagen: finalImagePath,
       fichaTecnica: {
         plataformas,
         desarrollador,
@@ -58,6 +95,7 @@ function App() {
 
     await handleAddReview(review, jsonPath);
   };
+
 
   const handleSaveImage = async (
     image: { path: string },
@@ -224,6 +262,8 @@ function App() {
             setJsonVar={setJsonPath}
             imageFolderVar={imagesFolder}
             setImageFolderVar={setImagesFolder}
+            gitVar={gitRootPath}
+            setGitVar={setGitRootPath}
             onSave={handleFinalSave}
             slug={slug}
             selectedImage={selectedImage}
