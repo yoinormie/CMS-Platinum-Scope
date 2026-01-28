@@ -1,5 +1,3 @@
-import type { Review } from "../types/reviewType";
-
 export const pickFile = async () => {
   const path = await window.api.openFile();
   if (path) console.log('Archivo seleccionado:', path);
