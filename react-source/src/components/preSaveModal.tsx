@@ -3,6 +3,8 @@ import { useState } from "react";
 import PickRouteTextSet from "./PickRouteTextSet";
 import { useEffect } from "react";
 import { getStorePath, setStorePath } from "../hooks/electronHooks";
+import { canSaveLastForm } from "../utils/validators";
+import { WarningModal } from "./warningModal";
 
 interface PreSaveModalProps {
     jsonVar: string
@@ -14,19 +16,17 @@ interface PreSaveModalProps {
 
 export function PreSaveModal(props: PreSaveModalProps) {
     const [remember, setRemember] = useState(false);
-    const [filePath, setFilePath] = useState('');
-    const [dirPath, setDirPath] = useState('');
+    const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+
 
     useEffect(() => {
         getStorePath('lastFile').then(p => {
             if (p) {
-                setFilePath(p);
                 props.setJsonVar(p);
             }
         });
         getStorePath('lastDirectory').then(p => {
             if (p) {
-                setDirPath(p);
                 props.setImageFolderVar(p);
             }
         });
@@ -38,13 +38,28 @@ export function PreSaveModal(props: PreSaveModalProps) {
             if (props.jsonVar) await setStorePath('lastFile', props.jsonVar);
             if (props.imageFolderVar) await setStorePath('lastDirectory', props.imageFolderVar);
         }
-        props.setModalVar(false);
+
+        if (canSaveLastForm({ jsonPath: props.jsonVar, imagePath: props.imageFolderVar })) {
+            props.setModalVar(false);
+            props.setImageFolderVar('');
+            props.setJsonVar('');
+            return;
+        }
+        setIsWarningModalOpen(true);
     };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-30">
             <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6">
                 <h2 className="text-xl font-bold mb-4">Detalles de pre-guardado</h2>
+
+                {isWarningModalOpen && (
+                    <WarningModal
+                        isOpen={isWarningModalOpen}
+                        setIsOpen={setIsWarningModalOpen}
+                        message="Pon las rutas, son necesarias."
+                    />
+                )}
 
                 {/* Ejemplo de inputs */}
                 <div className="flex flex-col gap-3">
@@ -83,10 +98,8 @@ export function PreSaveModal(props: PreSaveModalProps) {
                         Cancelar
                     </button>
                     <button
-                        onClick={() => {
-                            handleSave
-                            props.setModalVar(false);
-                            
+                        onClick={async () => {
+                            await handleSave()
                         }}
                         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                     >
