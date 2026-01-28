@@ -17,3 +17,13 @@ export function canSaveMainForm(data: {
     !(data.enlacesCompra.length === 0)
   );
 }
+
+export function canSaveLastForm(data: {
+  jsonPath: string;
+  imagePath: string;
+}): boolean {
+  return (
+    !!data.jsonPath.trim() &&
+    !!data.imagePath.trim()
+  );
+}
