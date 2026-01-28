@@ -102,3 +102,28 @@ ipcMain.handle("write-json", async (_, newReview, filePath: string) => {
 
   return { success: true };
 });
+
+ipcMain.handle(
+  "copy-rename-file",
+  async (_, sourcePath: string, destDir: string, newName: string) => {
+    try {
+      if (!fs.existsSync(sourcePath)) {
+        return { success: false, error: "Archivo origen no existe" };
+      }
+
+      if (!fs.existsSync(destDir)) {
+        return { success: false, error: "La carpeta destino no existe" };
+      }
+
+      const ext = path.extname(sourcePath);
+      const finalName = newName.endsWith(ext) ? newName : newName + ext;
+      const destPath = path.join(destDir, finalName);
+
+      fs.copyFileSync(sourcePath, destPath);
+
+      return { success: true, path: destPath };
+    } catch (err: any) {
+      return { success: false, error: err.message };
+    }
+  }
+);
