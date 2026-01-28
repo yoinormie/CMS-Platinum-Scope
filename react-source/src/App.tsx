@@ -130,7 +130,16 @@ function App() {
 
       <button
         onClick={() => {
-          if (canSaveMainForm({ titulo: titulo, selectedImage: selectedImage, minRequirements: minRequirements, opinion: form, enlacesCompra: enlacesCompraForm.enlacesCompra })) {
+          if (canSaveMainForm({
+            titulo: titulo,
+            selectedImage: selectedImage,
+            minRequirements: minRequirements,
+            opinion: form,
+            enlacesCompra: enlacesCompraForm.enlacesCompra,
+            desarrollador: desarrollador,
+            editor: editor,
+            plataformas: plataformas
+          })) {
             setIsPreSaveModalOpen(true)
             return
           }
