@@ -73,6 +73,7 @@ export function PreSaveModal(props: PreSaveModalProps) {
                 )}
 
                 <div className="flex flex-col gap-3">
+                    <p className="text-xs color-grey border-b">Recuerda que el json y la carpeta tienen que estar en el mismo repositorio.</p>
                     <PickRouteTextSet
                         idText="json-path"
                         labelText="Ruta del JSON"
@@ -85,6 +86,15 @@ export function PreSaveModal(props: PreSaveModalProps) {
                     <PickRouteTextSet
                         idText="images-folder"
                         labelText="Carpeta de imágenes"
+                        varText={props.imageFolderVar}
+                        setVarText={props.setImageFolderVar}
+                        placeholderText="./assets/images/"
+                        typePicker="directory"
+                    />
+
+                    <PickRouteTextSet
+                        idText="images-folder"
+                        labelText="Raíz del repositorio"
                         varText={props.imageFolderVar}
                         setVarText={props.setImageFolderVar}
                         placeholderText="./assets/images/"
