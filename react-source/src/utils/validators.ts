@@ -8,13 +8,19 @@ export function canSaveMainForm(data: {
   minRequirements: ReturnType<typeof useRequirementsForm>;
   opinion: ReturnType<typeof useReviewForm>;
   enlacesCompra: EnlaceCompra[]
+  desarrollador: string
+  editor: string
+  plataformas: string
 }): boolean {
   return (
     !!data.titulo.trim() &&
     !!data.selectedImage &&
     data.minRequirements.isValid() &&
     data.opinion.isValid() &&
-    !(data.enlacesCompra.length === 0)
+    !(data.enlacesCompra.length === 0) &&
+    !!data.desarrollador.trim() &&
+    !!data.editor.trim() &&
+    !!data.plataformas.trim()
   );
 }
 
