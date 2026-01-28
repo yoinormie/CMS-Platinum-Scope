@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import * as fs from 'fs'
 import Store from 'electron-store'
 
 interface StoreSchema {
@@ -76,4 +77,28 @@ ipcMain.handle('set-path', (_event, key: string, value: string) => {
 
 ipcMain.handle('get-path', (_event, key: string) => {
     return (store as any).get(key);
+});
+
+ipcMain.handle("write-json", async (_, newReview, filePath: string) => {
+  if (!filePath) {
+    return { success: false, error: "No se proporcionó la ruta del archivo" };
+  }
+
+  let data: any[] = [];
+
+  if (fs.existsSync(filePath)) {
+    const raw = fs.readFileSync(filePath, "utf-8");
+    try {
+      data = JSON.parse(raw);
+      if (!Array.isArray(data)) data = [];
+    } catch {
+      data = [];
+    }
+  }
+
+  data.push(newReview);
+
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+
+  return { success: true };
 });
