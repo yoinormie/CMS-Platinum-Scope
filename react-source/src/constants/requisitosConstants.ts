@@ -9,6 +9,8 @@ export function useRequirementsForm() {
     const [red, setRed] = useState("");
     const [disco, setDisco] = useState("");
     const [notas, setNotas] = useState("");
+    const isValid = () =>
+        [so, cpu, ram, gpu, disco].every(v => v.trim());
 
     return {
         so, setSO,
@@ -18,6 +20,7 @@ export function useRequirementsForm() {
         directX, setDirectx,
         red, setRed,
         disco, setDisco,
-        notas, setNotas
+        notas, setNotas,
+        isValid
     };
 }
