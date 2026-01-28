@@ -23,6 +23,9 @@ function App() {
   const [titulo, setTitulo] = useState("");
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
   const [isPreSaveModalOpen, setIsPreSaveModalOpen] = useState(false);
+  const [desarrollador, setDesarrollador] = useState("");
+  const [plataformas, setPlataformas] = useState("");
+  const [editor, setEditor] = useState("");
   const [jsonPath, setJsonPath] = useState("");
   const [imagesFolder, setImagesFolder] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -67,7 +70,14 @@ function App() {
           Ficha técnica
         </label>
         <div className="border border-[var(--color-border)] rounded p-4 my-4">
-          <TextSetsFichaTecnica />
+          <TextSetsFichaTecnica
+            desarrollador={desarrollador}
+            editor={editor}
+            plataformas={plataformas}
+            setDesarrollador={setDesarrollador}
+            setEditor={setEditor}
+            setPlataformas={setPlataformas}
+          />
           <details className='my-2'>
             <summary className="cursor-pointer font-semibold text-gray-700">
               Requisitos mínimos
