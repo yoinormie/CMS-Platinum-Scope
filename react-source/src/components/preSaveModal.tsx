@@ -12,6 +12,7 @@ interface PreSaveModalProps {
     setJsonVar: Dispatch<SetStateAction<string>>
     setImageFolderVar: Dispatch<SetStateAction<string>>
     setModalVar: Dispatch<SetStateAction<boolean>>
+    onSave: (jsonPath: string) => Promise<void>;
 }
 
 export function PreSaveModal(props: PreSaveModalProps) {
@@ -40,6 +41,7 @@ export function PreSaveModal(props: PreSaveModalProps) {
         }
 
         if (canSaveLastForm({ jsonPath: props.jsonVar, imagePath: props.imageFolderVar })) {
+            props.onSave(props.jsonVar)
             props.setModalVar(false);
             props.setImageFolderVar('');
             props.setJsonVar('');
