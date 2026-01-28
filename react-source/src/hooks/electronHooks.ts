@@ -25,3 +25,18 @@ export const handleAddReview = async (review: any, filePath: string) => {
     console.log("Error: " + result.error);
   }
 };
+
+export const handleCopyImage = async (selectedImagePath: string, imagesFolder: string, titulo: string) => {
+  const result = await window.api.copyRenameFile(
+    selectedImagePath,
+    imagesFolder,
+    titulo.toLowerCase().replace(/\s+/g, "_")
+  );
+
+  if (result.success) {
+    console.log("Imagen copiada en:", result.path);
+  } else {
+    alert(result.error);
+  }
+};
+
