@@ -4,10 +4,19 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import * as fs from 'fs'
 import Store from 'electron-store'
+import simpleGit from "simple-git";
 
 interface StoreSchema {
     lastFile: string;
     lastDirectory: string;
+}
+
+function existsInside(repoRoot: string, targetPath: string) {
+    const absRepo = path.resolve(repoRoot);
+    const absTarget = path.resolve(targetPath);
+
+    if (!absTarget.startsWith(absRepo)) return false;
+    return fs.existsSync(absTarget);
 }
 
 const store = new (Store as any)() as Store<StoreSchema>;
@@ -80,50 +89,115 @@ ipcMain.handle('get-path', (_event, key: string) => {
 });
 
 ipcMain.handle("write-json", async (_, newReview, filePath: string) => {
-  if (!filePath) {
-    return { success: false, error: "No se proporcionó la ruta del archivo" };
-  }
-
-  let data: any[] = [];
-
-  if (fs.existsSync(filePath)) {
-    const raw = fs.readFileSync(filePath, "utf-8");
-    try {
-      data = JSON.parse(raw);
-      if (!Array.isArray(data)) data = [];
-    } catch {
-      data = [];
+    if (!filePath) {
+        return { success: false, error: "No se proporcionó la ruta del archivo" };
     }
-  }
 
-  data.push(newReview);
+    let data: any[] = [];
 
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+    if (fs.existsSync(filePath)) {
+        const raw = fs.readFileSync(filePath, "utf-8");
+        try {
+            data = JSON.parse(raw);
+            if (!Array.isArray(data)) data = [];
+        } catch {
+            data = [];
+        }
+    }
 
-  return { success: true };
+    data.push(newReview);
+
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+
+    return { success: true };
 });
 
 ipcMain.handle(
-  "copy-rename-file",
-  async (_, sourcePath: string, destDir: string, newName: string) => {
-    try {
-      if (!fs.existsSync(sourcePath)) {
-        return { success: false, error: "Archivo origen no existe" };
-      }
+    "copy-rename-file",
+    async (_, sourcePath: string, destDir: string, newName: string) => {
+        try {
+            if (!fs.existsSync(sourcePath)) {
+                return { success: false, error: "Archivo origen no existe" };
+            }
 
-      if (!fs.existsSync(destDir)) {
-        return { success: false, error: "La carpeta destino no existe" };
-      }
+            if (!fs.existsSync(destDir)) {
+                return { success: false, error: "La carpeta destino no existe" };
+            }
 
-      const ext = path.extname(sourcePath);
-      const finalName = newName.endsWith(ext) ? newName : newName + ext;
-      const destPath = path.join(destDir, finalName);
+            const ext = path.extname(sourcePath);
+            const finalName = newName.endsWith(ext) ? newName : newName + ext;
+            const destPath = path.join(destDir, finalName);
 
-      fs.copyFileSync(sourcePath, destPath);
+            fs.copyFileSync(sourcePath, destPath);
 
-      return { success: true, path: destPath };
-    } catch (err: any) {
-      return { success: false, error: err.message };
+            return { success: true, path: destPath };
+        } catch (err: any) {
+            return { success: false, error: err.message };
+        }
     }
-  }
+);
+
+ipcMain.handle(
+    "git-auto-commit",
+    async (_, repoRoot: string, jsonPath: string, imagesDir: string, message: string) => {
+        try {
+            const absRepo = path.resolve(repoRoot);
+
+            // 1. ¿Existe repo?
+            if (!fs.existsSync(path.join(absRepo, ".git"))) {
+                return { success: false, error: "No es un repositorio git" };
+            }
+
+            // 2. ¿Están dentro y existen?
+            if (!existsInside(absRepo, jsonPath)) {
+                return { success: false, error: "El JSON no existe dentro del repo" };
+            }
+
+            if (!existsInside(absRepo, imagesDir)) {
+                return { success: false, error: "La carpeta de imágenes no existe dentro del repo" };
+            }
+
+            const git = simpleGit({ baseDir: absRepo });
+
+            const status = await git.status();
+            if (status.files.length === 0) {
+                return { success: false, error: "No hay cambios para commitear" };
+            }
+
+            await git.add(".");
+            await git.commit(message);
+
+            return { success: true, repo: absRepo };
+
+        } catch (err: any) {
+            return { success: false, error: err.message };
+        }
+    }
+);
+
+ipcMain.handle(
+    "get-relative-image-path",
+    async (_, jsonPath: string, imagesDir: string) => {
+        try {
+            if (!fs.existsSync(jsonPath)) {
+                return { success: false, error: "El JSON no existe" };
+            }
+
+            if (!fs.existsSync(imagesDir)) {
+                return { success: false, error: "La carpeta de imágenes no existe" };
+            }
+
+            const jsonDir = path.dirname(jsonPath);
+
+            // Ruta relativa desde la carpeta del json hacia la de imágenes
+            let relative = path.relative(jsonDir, imagesDir);
+
+            // Normalizar para JSON / web
+            relative = relative.split(path.sep).join("/");
+
+            return { success: true, path: relative };
+        } catch (err: any) {
+            return { success: false, error: err.message };
+        }
+    }
 );
