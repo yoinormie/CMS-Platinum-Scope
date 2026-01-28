@@ -10,10 +10,12 @@ import type { SelectedImage } from "../types/imageType";
 interface PreSaveModalProps {
     jsonVar: string;
     imageFolderVar: string;
+    gitVar: string
     selectedImage: SelectedImage | null;
     slug: string;
     setJsonVar: Dispatch<SetStateAction<string>>;
     setImageFolderVar: Dispatch<SetStateAction<string>>;
+    setGitVar: Dispatch<SetStateAction<string>>;
     setModalVar: Dispatch<SetStateAction<boolean>>;
     onSave: (jsonPath: string) => Promise<void>;
     onSaveImage: (
@@ -95,8 +97,8 @@ export function PreSaveModal(props: PreSaveModalProps) {
                     <PickRouteTextSet
                         idText="images-folder"
                         labelText="Raíz del repositorio"
-                        varText={props.imageFolderVar}
-                        setVarText={props.setImageFolderVar}
+                        varText={props.gitVar}
+                        setVarText={props.setGitVar}
                         placeholderText="./assets/images/"
                         typePicker="directory"
                     />
