@@ -15,10 +15,13 @@ import ImagePicker from './components/filePicker';
 import { canSaveMainForm } from './utils/validators';
 import { useReviewForm } from './constants/opinionConstants';
 import { WarningModal } from './components/warningModal';
+import { buildReviewJson } from './utils/jsonBuilder';
+import { handleAddReview } from './hooks/electronHooks';
 
 
 function App() {
   const minRequirements = useRequirementsForm()
+  const recRequirements = useRequirementsForm();
   const form = useReviewForm()
   const [titulo, setTitulo] = useState("");
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
@@ -31,6 +34,27 @@ function App() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const resourceForm = useRecursos()
   const enlacesCompraForm = useEnlacesCompra()
+
+  const handleFinalSave = async (jsonPath: string) => {
+    const review = buildReviewJson({
+      id: titulo.toLowerCase().replace(/\s+/g, "_"),
+      titulo,
+      imagen: imagesFolder,
+      fichaTecnica: {
+        plataformas,
+        desarrollador,
+        editor,
+        requisitosMinimos: minRequirements,
+        requisitosRecomendados: recRequirements,
+        sinopsis: form.sinopsis,
+      },
+      opinion: form,
+      recursos: resourceForm.recursos,
+      enlacesCompra: enlacesCompraForm.enlacesCompra,
+    });
+
+    await handleAddReview(review, jsonPath);
+  };
 
   return (
 
@@ -94,7 +118,9 @@ function App() {
             </summary>
 
             <div className="mt-4 flex flex-col gap-2">
-              <RecRequirementsSets />
+              <RecRequirementsSets
+                form={recRequirements}
+              />
             </div>
 
           </details>
@@ -157,6 +183,7 @@ function App() {
             setJsonVar={setJsonPath}
             imageFolderVar={imagesFolder}
             setImageFolderVar={setImagesFolder}
+            onSave={handleFinalSave}
           />
         )
       }
