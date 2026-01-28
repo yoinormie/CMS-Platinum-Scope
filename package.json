@@ -1,5 +1,5 @@
 {
-  "name": "back-end",
+  "name": "CMS Platinum Scope",
   "version": "1.0.0",
   "main": "./electron/main.ts",
   "scripts": {
