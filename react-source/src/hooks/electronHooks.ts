@@ -40,3 +40,28 @@ export const handleCopyImage = async (selectedImagePath: string, imagesFolder: s
   }
 };
 
+export const handleGitCommit = async (jsonPath: string, gitRoot: string, message: string) => {
+  const res = await window.api.gitAutoCommit(
+    jsonPath,
+    gitRoot,
+    message
+  );
+
+  if (!res.success) {
+    alert(res.error);
+  } else {
+    console.log("Commit hecho en:", res.jsonRoot);
+  }
+}
+
+export const handleImageRelativePath = async (jsonPath: string, imagesDir: string) => {
+  const res = await window.api.getRelativeImagePath(
+    jsonPath,
+    imagesDir
+  )
+  if(res.success){
+    return res.path
+  } else{
+    alert("Fallo al obtener la ruta relativa")
+  }
+}
