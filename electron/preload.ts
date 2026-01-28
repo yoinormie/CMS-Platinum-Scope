@@ -7,5 +7,7 @@ contextBridge.exposeInMainWorld('api', {
   getStorePath: (key: string) => ipcRenderer.invoke('get-path', key),
   writeJson: async (review: any, filePath: string) => {
     return await ipcRenderer.invoke("write-json", review, filePath);
-  }
+  },
+  copyRenameFile: (sourcePath: string, destDir: string, newName: string) =>
+    ipcRenderer.invoke("copy-rename-file", sourcePath, destDir, newName),
 });
