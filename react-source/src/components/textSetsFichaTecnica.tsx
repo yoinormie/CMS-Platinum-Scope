@@ -1,32 +1,37 @@
 import TextSet from "./TextSet";
-import { useState } from "react";
 
-export function TextSetsFichaTecnica() {
-    const [desarrollador, setDesarrollador] = useState("");
-    const [plataformas, setPlataformas] = useState("");
-    const [editor, setEditor] = useState("");
+interface TextSetsFichaTecnicaProps {
+    desarrollador: string
+    setDesarrollador: React.Dispatch<React.SetStateAction<string>>
+    editor: string
+    setEditor: React.Dispatch<React.SetStateAction<string>>
+    plataformas: string
+    setPlataformas: React.Dispatch<React.SetStateAction<string>>
+}
+
+export function TextSetsFichaTecnica(props: TextSetsFichaTecnicaProps) {
 
     return (
         <>
             <TextSet
                 idText='desarrollador'
                 labelText='Desarrollador'
-                varText={desarrollador}
-                setVarText={setDesarrollador}
+                varText={props.desarrollador}
+                setVarText={props.setDesarrollador}
 
             />
             <TextSet
                 idText='editor'
                 labelText='Editor'
-                varText={editor}
-                setVarText={setEditor}
+                varText={props.editor}
+                setVarText={props.setEditor}
             />
 
             <TextSet
                 idText='plataformas'
                 labelText='Plataformas'
-                varText={plataformas}
-                setVarText={setPlataformas}
+                varText={props.plataformas}
+                setVarText={props.setPlataformas}
             />
 
         </>
