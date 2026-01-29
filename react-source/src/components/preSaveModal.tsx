@@ -5,46 +5,76 @@ import { useEffect } from "react";
 import { getStorePath, setStorePath } from "../hooks/electronHooks";
 import { canSaveLastForm } from "../utils/validators";
 import { WarningModal } from "./warningModal";
+import type { SelectedImage } from "../types/imageType";
 
 interface PreSaveModalProps {
-    jsonVar: string
-    imageFolderVar: string
-    setJsonVar: Dispatch<SetStateAction<string>>
-    setImageFolderVar: Dispatch<SetStateAction<string>>
-    setModalVar: Dispatch<SetStateAction<boolean>>
+    jsonVar: string;
+    imageFolderVar: string;
+    gitVar: string
+    selectedImage: SelectedImage | null;
+    slug: string;
+    setJsonVar: Dispatch<SetStateAction<string>>;
+    setImageFolderVar: Dispatch<SetStateAction<string>>;
+    setGitVar: Dispatch<SetStateAction<string>>;
+    setModalVar: Dispatch<SetStateAction<boolean>>;
+    onSave: (jsonPath: string) => Promise<void>;
+    onSaveImage: (
+        image: SelectedImage,
+        destDir: string,
+        slug: string
+    ) => Promise<string>;
 }
 
 export function PreSaveModal(props: PreSaveModalProps) {
     const [remember, setRemember] = useState(false);
     const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
 
-
     useEffect(() => {
-        getStorePath('lastFile').then(p => {
-            if (p) {
-                props.setJsonVar(p);
-            }
+        getStorePath("lastFile").then((p) => {
+            if (p) props.setJsonVar(p);
         });
-        getStorePath('lastDirectory').then(p => {
-            if (p) {
-                props.setImageFolderVar(p);
-            }
+        getStorePath("lastDirectory").then((p) => {
+            if (p) props.setImageFolderVar(p);
         });
+        getStorePath("lastRootGit").then((p) => {
+            if (p) props.setGitVar(p);
+        })
     }, []);
-
 
     const handleSave = async () => {
         if (remember) {
-            if (props.jsonVar) await setStorePath('lastFile', props.jsonVar);
-            if (props.imageFolderVar) await setStorePath('lastDirectory', props.imageFolderVar);
+            if (props.jsonVar) await setStorePath("lastFile", props.jsonVar);
+            if (props.imageFolderVar) await setStorePath("lastDirectory", props.imageFolderVar);
+            if (props.gitVar) await setStorePath("lastRootGit", props.gitVar)
         }
 
         if (canSaveLastForm({ jsonPath: props.jsonVar, imagePath: props.imageFolderVar })) {
+            if (!props.selectedImage) throw new Error("No hay imagen seleccionada");
+            await props.onSaveImage(
+                props.selectedImage,
+                props.imageFolderVar,
+                props.slug
+            );
+            await props.onSave(props.jsonVar);
+
+            try {
+                const msg = `Nueva review: ${props.slug}`;
+                await window.api.gitAutoCommit(
+                    props.gitVar,
+                    props.jsonVar,
+                    props.imageFolderVar,
+                    msg
+                );
+            } catch (err: any) {
+                alert("No se pudo hacer commit: " + err.message);
+            }
+
             props.setModalVar(false);
-            props.setImageFolderVar('');
-            props.setJsonVar('');
+            props.setImageFolderVar("");
+            props.setJsonVar("");
             return;
         }
+
         setIsWarningModalOpen(true);
     };
 
@@ -61,8 +91,8 @@ export function PreSaveModal(props: PreSaveModalProps) {
                     />
                 )}
 
-                {/* Ejemplo de inputs */}
                 <div className="flex flex-col gap-3">
+                    <p className="text-xs color-grey border-b">Recuerda que el json y la carpeta tienen que estar en el mismo repositorio.</p>
                     <PickRouteTextSet
                         idText="json-path"
                         labelText="Ruta del JSON"
@@ -80,11 +110,21 @@ export function PreSaveModal(props: PreSaveModalProps) {
                         placeholderText="./assets/images/"
                         typePicker="directory"
                     />
+
+                    <PickRouteTextSet
+                        idText="images-folder"
+                        labelText="Raíz del repositorio"
+                        varText={props.gitVar}
+                        setVarText={props.setGitVar}
+                        placeholderText="./assets/images/"
+                        typePicker="directory"
+                    />
+
                     <label className="flex items-center gap-2 mt-2 text-sm">
                         <input
                             type="checkbox"
                             checked={remember}
-                            onChange={e => setRemember(e.target.checked)}
+                            onChange={(e) => setRemember(e.target.checked)}
                         />
                         Recordar estas rutas
                     </label>
@@ -99,7 +139,7 @@ export function PreSaveModal(props: PreSaveModalProps) {
                     </button>
                     <button
                         onClick={async () => {
-                            await handleSave()
+                            await handleSave();
                         }}
                         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                     >
@@ -108,5 +148,5 @@ export function PreSaveModal(props: PreSaveModalProps) {
                 </div>
             </div>
         </div>
-    )
+    );
 }
