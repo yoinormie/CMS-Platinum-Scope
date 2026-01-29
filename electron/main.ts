@@ -33,7 +33,7 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, './preload.ts'),
             nodeIntegration: true,
-            contextIsolation: true
+            contextIsolation: true,
         }
     });
 
@@ -166,6 +166,7 @@ ipcMain.handle(
 
             await git.add(".");
             await git.commit(message);
+            await git.push("origin", "main")
 
             return { success: true, repo: absRepo };
 
