@@ -36,12 +36,16 @@ export function PreSaveModal(props: PreSaveModalProps) {
         getStorePath("lastDirectory").then((p) => {
             if (p) props.setImageFolderVar(p);
         });
+        getStorePath("lastRootGit").then((p) => {
+            if (p) props.setGitVar(p);
+        })
     }, []);
 
     const handleSave = async () => {
         if (remember) {
             if (props.jsonVar) await setStorePath("lastFile", props.jsonVar);
             if (props.imageFolderVar) await setStorePath("lastDirectory", props.imageFolderVar);
+            if (props.gitVar) await setStorePath("lastRootGit", props.gitVar)
         }
 
         if (canSaveLastForm({ jsonPath: props.jsonVar, imagePath: props.imageFolderVar })) {
@@ -52,6 +56,19 @@ export function PreSaveModal(props: PreSaveModalProps) {
                 props.slug
             );
             await props.onSave(props.jsonVar);
+
+            try {
+                const msg = `Nueva review: ${props.slug}`;
+                await window.api.gitAutoCommit(
+                    props.gitVar,
+                    props.jsonVar,
+                    props.imageFolderVar,
+                    msg
+                );
+            } catch (err: any) {
+                alert("No se pudo hacer commit: " + err.message);
+            }
+
             props.setModalVar(false);
             props.setImageFolderVar("");
             props.setJsonVar("");
