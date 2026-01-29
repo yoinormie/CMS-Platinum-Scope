@@ -35,6 +35,17 @@ export function buildReviewJson(options: {
 
   const opinionData = serializeHookData(options.opinion, ["sinopsis"]);
 
+  const cleanRecursos =
+  options.recursos && options.recursos.length > 0
+    ? options.recursos.map(r =>
+        Object.fromEntries(
+          Object.entries(r).filter(
+            ([_, v]) => v !== undefined && v !== null && v !== ""
+          )
+        )
+      )
+    : undefined;
+
   return Object.fromEntries(
     Object.entries({
       id: options.id,
@@ -49,9 +60,7 @@ export function buildReviewJson(options: {
         ...(options.fichaTecnica.sinopsis ? { sinopsis: options.fichaTecnica.sinopsis } : {}),
       },
       opinion: opinionData,
-      recursos: (options.recursos ?? []).map(r =>
-        Object.fromEntries(Object.entries(r).filter(([_, v]) => v !== undefined && v !== null && v !== ""))
-      ),
+      ...(cleanRecursos ? { recursos: cleanRecursos } : {}),
       enlaces_compra: (options.enlacesCompra ?? []).map(e =>
         Object.fromEntries(Object.entries(e).filter(([_, v]) => v !== undefined && v !== null && v !== ""))
       ),

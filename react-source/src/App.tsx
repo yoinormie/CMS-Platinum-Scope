@@ -18,7 +18,6 @@ import { buildReviewJson } from './utils/jsonBuilder';
 import { handleAddReview, handleImageRelativePath } from './hooks/electronHooks';
 import type { SelectedImage } from './types/imageType';
 
-
 function App() {
   let filePath: string = "";
   const minRequirements = useRequirementsForm()
@@ -76,18 +75,30 @@ function App() {
 
     console.log(finalImagePath)
 
+    const recRequirementsValues = Object.entries(recRequirements)
+      .filter(([, value]) => typeof value === "string")
+      .reduce((acc, [key, value]) => {
+        const v = value as string;
+        if (v.trim() !== "") acc[key] = v.trim();
+        return acc;
+      }, {} as Record<string, string>);
+
+    const fichaTecnica: any = {
+      plataformas,
+      desarrollador,
+      editor,
+      requisitosMinimos: minRequirements,
+      sinopsis: form.sinopsis,
+      ...(Object.keys(recRequirementsValues).length > 0 && {
+        requisitosRecomendados: recRequirementsValues
+      }),
+    };
+
     const review = buildReviewJson({
       id: slug,
       titulo,
       imagen: finalImagePath,
-      fichaTecnica: {
-        plataformas,
-        desarrollador,
-        editor,
-        requisitosMinimos: minRequirements,
-        requisitosRecomendados: recRequirements,
-        sinopsis: form.sinopsis,
-      },
+      fichaTecnica: fichaTecnica,
       opinion: form,
       recursos: resourceForm.recursos,
       enlacesCompra: enlacesCompraForm.enlacesCompra,
