@@ -22,6 +22,7 @@ export default function ImagePicker({ label, onSelect, accept = "image/*" }: Ima
       <label className="text-lg font-medium text-gray-700">{label}</label>
       <input
         type="file"
+        value={fileName}
         accept={accept}
         onChange={handleFileChange}
         className="border border-[var(--color-border)] rounded px-3 py-2"
