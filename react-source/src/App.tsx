@@ -17,8 +17,6 @@ import { WarningModal } from './components/warningModal';
 import { buildReviewJson } from './utils/jsonBuilder';
 import { handleAddReview, handleImageRelativePath } from './hooks/electronHooks';
 import type { SelectedImage } from './types/imageType';
-import { isString } from './utils/helpers';
-
 
 function App() {
   let filePath: string = "";
