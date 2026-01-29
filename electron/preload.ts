@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   copyRenameFile: (sourcePath: string, destDir: string, newName: string) =>
     ipcRenderer.invoke("copy-rename-file", sourcePath, destDir, newName),
-  gitAutoCommit: (jsonPath: string, imagesDir: string, message: string) =>
-    ipcRenderer.invoke("git-auto-commit", jsonPath, imagesDir, message),
+  gitAutoCommit: (repoRoot: string, jsonPath: string, imagesDir: string, message: string) =>
+    ipcRenderer.invoke("git-auto-commit", repoRoot, jsonPath, imagesDir, message),
   getRelativeImagePath: (jsonPath: string, imagesDir: string) => ipcRenderer.invoke("get-relative-image-path", jsonPath, imagesDir)
 });

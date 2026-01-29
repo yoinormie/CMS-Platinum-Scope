@@ -8,11 +8,11 @@ export const pickDirectory = async () => {
   if (path) console.log('Directorio seleccionado:', path);
 };
 
-export const setStorePath = async (key: 'lastFile' | 'lastDirectory', value: string) => {
+export const setStorePath = async (key: 'lastFile' | 'lastDirectory' | 'lastRootGit', value: string) => {
   await window.api.setStorePath(key, value);
 };
 
-export const getStorePath = async (key: 'lastFile' | 'lastDirectory'): Promise<string | null> => {
+export const getStorePath = async (key: 'lastFile' | 'lastDirectory' | 'lastRootGit'): Promise<string | null> => {
   return await window.api.getStorePath(key);
 };
 
@@ -40,10 +40,11 @@ export const handleCopyImage = async (selectedImagePath: string, imagesFolder: s
   }
 };
 
-export const handleGitCommit = async (jsonPath: string, gitRoot: string, message: string) => {
+export const handleGitCommit = async (repoRoot: string, jsonPath: string, imagesDir: string, message: string) => {
   const res = await window.api.gitAutoCommit(
+    repoRoot,
     jsonPath,
-    gitRoot,
+    imagesDir,
     message
   );
 
