@@ -21,17 +21,23 @@ function existsInside(repoRoot: string, targetPath: string) {
 
 const store = new (Store as any)() as Store<StoreSchema>;
 
+const isDev = process.env.NODE_ENV === 'development';
+
 let win: BrowserWindow;
 
 function createWindow() {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
 
+    const preloadPath = isDev
+        ? path.join(app.getAppPath(), "electron", "preload.ts")
+        : path.join(__dirname, "preload.js");
+
     win = new BrowserWindow({
         width: 1200,
         height: 800,
         webPreferences: {
-            preload: path.join(__dirname, './preload.ts'),
+            preload: preloadPath,
             nodeIntegration: true,
             contextIsolation: true,
         }
@@ -39,11 +45,15 @@ function createWindow() {
 
     win.maximize();
 
-    if (process.env.NODE_ENV === 'development') {
+    if (isDev) {
         win.loadURL('http://localhost:5173');
     } else {
-        win.loadFile(path.join(__dirname, '../src/dist/index.html'));
+        const indexPath = isDev
+            ? path.join(app.getAppPath(), 'react-source', 'dist', 'index.html')
+            : path.join(process.resourcesPath, 'react', 'index.html');
+        win.loadFile(indexPath);
     }
+
 }
 
 app.whenReady().then(() => {
